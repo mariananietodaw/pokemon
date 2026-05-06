@@ -7,6 +7,7 @@
 module pokemon {
 	requires jakarta.annotation-api;
 	requires jakarta.annotation-api;
+	requires jakarta.annotation-api;
 	requires org.eclipse.jface.text;
 	requires jakarta.annotation-api;
 	requires org.eclipse.jface;
