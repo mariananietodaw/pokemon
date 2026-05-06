@@ -7,6 +7,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.events.PaintListener;
+import org.eclipse.swt.events.PaintEvent;
 
 public class paginaP {
 
@@ -14,6 +16,7 @@ public class paginaP {
     private Text text;
     private Text text_1;
     private Text text_2;
+    private Image background;
 
     public static void main(String[] args) {
         try {
@@ -27,6 +30,7 @@ public class paginaP {
     public void open() {
         Display display = Display.getDefault();
         createContents();
+
         shell.open();
         shell.layout();
 
@@ -36,46 +40,58 @@ public class paginaP {
             }
         }
 
+        // Liberar recursos
+        if (background != null && !background.isDisposed()) {
+            background.dispose();
+        }
+
         display.dispose();
     }
 
     protected void createContents() {
         shell = new Shell();
-        shell.setSize(875, 689);
+        shell.setSize(875, 636);
         shell.setText("Pokedex");
+        shell.setLayout(null);
 
         Display display = shell.getDisplay();
 
-        //  Imagen de fondo
-        Image background = new Image(display,
-                "C:\\Users\\Usuario\\Desktop\\pokemon\\pokemon\\src\\pokemon\\cerrado.png");
+        // 📌 Cargar imagen desde recursos (NO ruta absoluta)
+        background = new Image(display,
+        	    "C:\\Users\\Usuario\\Desktop\\pokemon\\pokemon\\src\\pokemon\\cerrado.png");
+        if (background == null) {
+            System.out.println("❌ Imagen no cargada");
+        } else {
+            System.out.println("✅ Imagen cargada");
+        }
+        // 📌 Dibujar fondo correctamente
+        shell.addPaintListener(new PaintListener() {
+            @Override
+            public void paintControl(PaintEvent e) {
+                if (background != null) {
+                    e.gc.drawImage(background, 0, 0);
+                }
+            }
+        });
 
-        Label fondo = new Label(shell, SWT.NONE);
-        fondo.setImage(background);
-        fondo.setBounds(-205, -62, 1366, 768);
-
-        //  Labels 
+        // 🔹 Labels
         Label lblBienvenido = new Label(shell, SWT.NONE);
         lblBienvenido.setBounds(435, 174, 220, 20);
         lblBienvenido.setText("INDICA QUE POKEMON BUSCAS");
-        lblBienvenido.setBackground(display.getSystemColor(SWT.COLOR_TRANSPARENT));
 
         Label lblNombre = new Label(shell, SWT.NONE);
         lblNombre.setText("Nombre:");
         lblNombre.setBounds(409, 214, 64, 15);
-        lblNombre.setBackground(display.getSystemColor(SWT.COLOR_TRANSPARENT));
 
         Label lblNumero = new Label(shell, SWT.NONE);
         lblNumero.setBounds(348, 241, 130, 15);
         lblNumero.setText("Numero de pokedex:");
-        lblNumero.setBackground(display.getSystemColor(SWT.COLOR_TRANSPARENT));
 
         Label lblTipo = new Label(shell, SWT.NONE);
         lblTipo.setText("Tipo:");
         lblTipo.setBounds(424, 268, 35, 15);
-        lblTipo.setBackground(display.getSystemColor(SWT.COLOR_TRANSPARENT));
 
-        //  Text fields 
+        // 🔹 Campos de texto
         text = new Text(shell, SWT.BORDER);
         text.setBounds(479, 211, 172, 21);
 
@@ -85,12 +101,9 @@ public class paginaP {
         text_2 = new Text(shell, SWT.BORDER);
         text_2.setBounds(479, 265, 172, 21);
 
-        //  Botón
-        Button btnBuscar = new Button(shell, SWT.NONE);
+        // 🔹 Botón
+        Button btnBuscar = new Button(shell, SWT.PUSH);
         btnBuscar.setBounds(581, 318, 75, 25);
         btnBuscar.setText("BUSCAR");
-
-        // 📌 Asegurar que el fondo quede detrás
-        fondo.moveBelow(null);
     }
 }

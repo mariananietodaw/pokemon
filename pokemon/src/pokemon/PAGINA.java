@@ -40,6 +40,7 @@ public class PAGINA {
         shell.setText("SWT Application");
 
         Display display = shell.getDisplay();
+        
 
         // 📌 Cargar imagen
       // Image background = new Image(display, "Pokedex.jpg");
@@ -48,7 +49,7 @@ public class PAGINA {
         // 📌 Label como fondo
         Label fondo = new Label(shell, SWT.NONE);
         fondo.setImage(background);
-        fondo.setBounds(-372, -70, 1252, 710);
+        fondo.setBounds(-376, -60, 1252, 710);
 
         // (opcional) para que otros controles se vean encima
         fondo.moveBelow(null);
