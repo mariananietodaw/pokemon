@@ -17,7 +17,7 @@ public class paginaP {
 
     public static void main(String[] args) {
         try {
-        	paginaP window = new paginaP();
+            paginaP window = new paginaP();
             window.open();
         } catch (Exception e) {
             e.printStackTrace();
@@ -25,7 +25,6 @@ public class paginaP {
     }
 
     public void open() {
-    	
         Display display = Display.getDefault();
         createContents();
         shell.open();
@@ -42,55 +41,56 @@ public class paginaP {
 
     protected void createContents() {
         shell = new Shell();
-        shell.setSize( 875, 689);
-        shell.setText("SWT Application");
+        shell.setSize(875, 689);
+        shell.setText("Pokedex");
 
         Display display = shell.getDisplay();
 
-        // 📌 Cargar imagen
-      // Image background = new Image(display, "Pokedex.jpg");
-        Image background = new Image(display, "C:\\Users\\Usuario\\Desktop\\pokemon\\pokemon\\src\\pokemon\\cerrado.png");
-        
-                // 📌 Label como fondo
-                Label fondo = new Label(shell, SWT.NONE);
-                fondo.setImage(background);
-                fondo.setBounds(-220, -53, 1366, 768);
-                
-                Label lblBienvenido = new Label(shell, SWT.NONE);
-                lblBienvenido.setBounds(435, 174, 177, 15);
-                lblBienvenido.setText("INDICA QUE POKEMON BUSCAS");
-                
-                text = new Text(shell, SWT.BORDER);
-                text.setBounds(479, 211, 172, 21);
-                
-                Button btnNewButton = new Button(shell, SWT.NONE);
-                btnNewButton.setBounds(581, 318, 75, 25);
-                btnNewButton.setText("BUSCAR");
-                
-                Label lblIndicaQuePokemon = new Label(shell, SWT.NONE);
-                lblIndicaQuePokemon.setText("Nombre:");
-                lblIndicaQuePokemon.setBounds(409, 214, 64, 15);
-                
-                Label lblIndicaQuePokemon_1 = new Label(shell, SWT.NONE);
-                lblIndicaQuePokemon_1.setText("Nombre:");
-                lblIndicaQuePokemon_1.setBounds(409, 217, 64, 15);
-                
-                Label lblNewLabel = new Label(shell, SWT.NONE);
-                lblNewLabel.setBounds(348, 241, 110, 15);
-                lblNewLabel.setText("Numero de pokedex:");
-                
-                Label lblTipo = new Label(shell, SWT.NONE);
-                lblTipo.setText("Tipo:");
-                lblTipo.setBounds(424, 268, 35, 15);
-                
-                text_1 = new Text(shell, SWT.BORDER);
-                text_1.setBounds(479, 238, 172, 21);
-                
-                text_2 = new Text(shell, SWT.BORDER);
-                text_2.setBounds(479, 265, 172, 21);
-                
-                        // (opcional) para que otros controles se vean encima
-                        fondo.moveBelow(null);
+        //  Imagen de fondo
+        Image background = new Image(display,
+                "C:\\Users\\Usuario\\Desktop\\pokemon\\pokemon\\src\\pokemon\\cerrado.png");
+
+        Label fondo = new Label(shell, SWT.NONE);
+        fondo.setImage(background);
+        fondo.setBounds(-205, -62, 1366, 768);
+
+        //  Labels 
+        Label lblBienvenido = new Label(shell, SWT.NONE);
+        lblBienvenido.setBounds(435, 174, 220, 20);
+        lblBienvenido.setText("INDICA QUE POKEMON BUSCAS");
+        lblBienvenido.setBackground(display.getSystemColor(SWT.COLOR_TRANSPARENT));
+
+        Label lblNombre = new Label(shell, SWT.NONE);
+        lblNombre.setText("Nombre:");
+        lblNombre.setBounds(409, 214, 64, 15);
+        lblNombre.setBackground(display.getSystemColor(SWT.COLOR_TRANSPARENT));
+
+        Label lblNumero = new Label(shell, SWT.NONE);
+        lblNumero.setBounds(348, 241, 130, 15);
+        lblNumero.setText("Numero de pokedex:");
+        lblNumero.setBackground(display.getSystemColor(SWT.COLOR_TRANSPARENT));
+
+        Label lblTipo = new Label(shell, SWT.NONE);
+        lblTipo.setText("Tipo:");
+        lblTipo.setBounds(424, 268, 35, 15);
+        lblTipo.setBackground(display.getSystemColor(SWT.COLOR_TRANSPARENT));
+
+        //  Text fields 
+        text = new Text(shell, SWT.BORDER);
+        text.setBounds(479, 211, 172, 21);
+
+        text_1 = new Text(shell, SWT.BORDER);
+        text_1.setBounds(479, 238, 172, 21);
+
+        text_2 = new Text(shell, SWT.BORDER);
+        text_2.setBounds(479, 265, 172, 21);
+
+        //  Botón
+        Button btnBuscar = new Button(shell, SWT.NONE);
+        btnBuscar.setBounds(581, 318, 75, 25);
+        btnBuscar.setText("BUSCAR");
+
+        // 📌 Asegurar que el fondo quede detrás
+        fondo.moveBelow(null);
     }
 }
-
