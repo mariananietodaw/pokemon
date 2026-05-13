@@ -62,11 +62,27 @@ public class ConexionMySQL {
      *
      * @throws SQLException Se lanzará cuando haya un fallo con la base de datos
      */
-    public void conectar() throws SQLException {
+  /*  public void conectar() throws SQLException {
         if (connection == null || connection.isClosed()) {
             registrarDriver();
             connection = (Connection) DriverManager.getConnection("jdbc:oracle:thin:@//" + HOST + "/" + BD, USUARIO,PASS);
             
+        }
+    }*/
+    public void conectar() throws SQLException {
+        if (connection == null || connection.isClosed()) {
+            registrarDriver();
+            // Usamos el formato más compatible para Oracle XE / 21c
+            String url = "jdbc:oracle:thin:@localhost:1521/" + BD;
+            
+            try {
+                connection = DriverManager.getConnection(url, USUARIO, PASS);
+                System.out.println("Conexión exitosa a Oracle en: " + url);
+            } catch (SQLException e) {
+                System.err.println("URL intentada: " + url);
+                System.err.println("Código de error Oracle: " + e.getErrorCode());
+                throw new SQLException("Fallo real de conexión: " + e.getMessage());
+            }
         }
     }
 

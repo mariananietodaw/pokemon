@@ -14,6 +14,7 @@ public class pagina_2 extends JFrame {
     private String usuarioSesion;
 
     public pagina_2(String usuario) {
+    	
         this.usuarioSesion = usuario;
         
         setTitle("Menú Principal - Pokémon");

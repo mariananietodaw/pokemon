@@ -15,11 +15,7 @@ public class pagina_3 extends JFrame {
     private JTextArea areaResultados;
     private String userSesion;
 
-    /**
-     * Constructor: Recibe el usuario para mantener la conexión activa.
-     */
     public pagina_3(String usuario) {
-        // Guardamos el usuario recibido
         this.userSesion = usuario;
         
         setTitle("Buscador de Pokémon - Sesión: " + usuario);
@@ -37,7 +33,7 @@ public class pagina_3 extends JFrame {
         lblTitulo.setBounds(100, 10, 300, 30);
         contentPane.add(lblTitulo);
 
-        // --- Filtros de Búsqueda ---
+        // --- Filtros ---
         JLabel l1 = new JLabel("Nombre:");
         l1.setBounds(30, 60, 80, 20);
         contentPane.add(l1);
@@ -70,79 +66,87 @@ public class pagina_3 extends JFrame {
         // --- Botón BUSCAR ---
         JButton btnBuscar = new JButton("BUSCAR");
         btnBuscar.setFont(new Font("Tahoma", Font.BOLD, 12));
-        btnBuscar.setBounds(280, 60, 140, 95);
+        btnBuscar.setBounds(307, 124, 120, 30);
         btnBuscar.addActionListener(e -> ejecutarBusqueda());
         contentPane.add(btnBuscar);
 
-        // --- Botón GESTIONAR (Ir a Página 4) ---
+        // --- Botón GESTIONAR ---
         JButton btnIrP4 = new JButton("Gestionar (Editar/Eliminar)");
         btnIrP4.setBounds(250, 425, 200, 30);
         btnIrP4.addActionListener(e -> {
-            new pagina_4(userSesion).setVisible(true);
+            // Asegúrate de tener creada la clase pagina_4
+            // new pagina_4(userSesion).setVisible(true);
             dispose();
         });
         contentPane.add(btnIrP4);
 
-        // --- Botón VOLVER (Ir a Página 2) ---
+        // --- Botón VOLVER ---
         JButton btnVolver = new JButton("← Volver al Menú");
         btnVolver.setBounds(10, 520, 150, 30);
         btnVolver.addActionListener(e -> {
-            new pagina_2(userSesion).setVisible(true);
+            // new pagina_2(userSesion).setVisible(true);
             dispose();
         });
         contentPane.add(btnVolver);
     }
 
-    /**
-     * Lógica de filtrado usando tu clase Métodos
-     */
     private void ejecutarBusqueda() {
-        areaResultados.setText("Consultando base de datos...\n");
+        // 1. Cambiamos el texto para indicar que empezó
+        areaResultados.setText("Consultando base de datos... Por favor espere.\n");
         
-        Métodos logica = new Métodos();
-        logica.conectar(userSesion);
-        
-        if (logica.conexion == null) {
-            areaResultados.setText("ERROR: No se pudo conectar a la DB.\nVerifica que MySQL esté encendido.");
-            return;
-        }
-        
-        try {
-            // Llamada a tu método buscarPokemon
-            ResultSet rs = logica.buscarPokemon(
-                txtNom.getText().trim(), 
-                txtTip.getText().trim(), 
-                txtId.getText().trim()
-            );
+        // 2. Usamos un hilo secundario para no bloquear la ventana
+        Thread hiloBusqueda = new Thread(() -> {
+            Métodos logica = new Métodos();
+            
+            try {
+                System.out.println("Intentando conectar...");
+                logica.conectar(userSesion);
+                
+                if (logica.conexion == null) {
+                    SwingUtilities.invokeLater(() -> 
+                        areaResultados.setText("ERROR: No se pudo conectar. Verifica XAMPP/MySQL."));
+                    return;
+                }
 
-            if (rs != null) {
-                areaResultados.setText("ID\tNOMBRE\t\tTIPO\n");
-                areaResultados.append("======================================\n");
+                // Capturamos datos de los campos
+                String nombre = txtNom.getText().trim();
+                String tipo = txtTip.getText().trim();
+                String id = txtId.getText().trim();
+
+                System.out.println("Ejecutando SQL con filtros: " + nombre + ", " + tipo + ", " + id);
+                ResultSet rs = logica.buscarPokemon(nombre, tipo, id);
+
+                // 3. Procesamos los resultados
+                StringBuilder sb = new StringBuilder();
+                sb.append("ID\tNOMBRE\t\tTIPO\n");
+                sb.append("======================================\n");
                 
                 boolean hayDatos = false;
-                while (rs.next()) {
-                    hayDatos = true;
-                    // Asegúrate de que estos nombres de columna sean iguales en tu DB
-                    int id = rs.getInt("IDpoke");
-                    String nombre = rs.getString("pokename");
-                    String tipo = rs.getString("typename");
-                    
-                    areaResultados.append(id + "\t" + nombre + "\t\t" + tipo + "\n");
+                if (rs != null) {
+                    while (rs.next()) {
+                        hayDatos = true;
+                        sb.append(rs.getInt("IDpoke")).append("\t")
+                          .append(rs.getString("pokename")).append("\t\t")
+                          .append(rs.getString("typename")).append("\n");
+                    }
                 }
-                
-                if (!hayDatos) {
-                    areaResultados.append("\nNo se encontraron resultados.");
-                }
+
+                if (!hayDatos) sb.append("\nNo se encontraron resultados.");
+
+                // 4. Actualizamos la interfaz desde el hilo principal
+                String resultadoFinal = sb.toString();
+                SwingUtilities.invokeLater(() -> areaResultados.setText(resultadoFinal));
+
+                logica.desconectar();
+                System.out.println("Busqueda finalizada con éxito.");
+
+            } catch (Exception ex) {
+                System.err.println("Error en la búsqueda: " + ex.getMessage());
+                SwingUtilities.invokeLater(() -> 
+                    areaResultados.setText("Error crítico: " + ex.getMessage()));
             }
-            
-            logica.desconectar();
-            
-        } catch (SQLException ex) {
-            areaResultados.setText("Error de SQL: " + ex.getMessage());
-            ex.printStackTrace();
-        } catch (Exception ex) {
-            areaResultados.setText("Error crítico: " + ex.getMessage());
-            ex.printStackTrace();
-        }
+        });
+
+        hiloBusqueda.start(); // Arranca el proceso en segundo plano
     }
 }

@@ -36,6 +36,7 @@ public class pagina_1 extends JFrame {
         btnConectar.setBounds(130, 120, 120, 30);
         btnConectar.addActionListener(e -> {
             String user = txtUsuario.getText();
+            
             Métodos db = new Métodos();
             db.conectar(user); // Lógica de tu clase Métodos
 
